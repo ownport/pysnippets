@@ -24,7 +24,7 @@ Example:
 hxs = HtmlXPathSelector(content) # a HTML selector
 xxs = XmlXPathSelector(content) # a XML selector
 ```
-To explain how to use the selectors we’ll use the next HTML code:
+To explain how to use the selectors we’ll use the next HTML code (html_content variable):
 ```html
 <html>
  <head>
@@ -41,5 +41,30 @@ To explain how to use the selectors we’ll use the next HTML code:
   </div>
  </body>
 </html>
+```
+Since we’re dealing with HTML, we’ll be using the HtmlXPathSelector
+```python
+>>> import xpathselectors
+>>> hxs = xpathselectors.HtmlXPathSelector(html_content)
+>>> hxs.select('//title/text()')
+[<HtmlXPathSelector xpath='//title/text()' data=u'Example website'>]
+```
+As you can see, the select() method returns an XPathSelectorList, which is a list of new selectors. This API can be used quickly for extracting nested data.
+
+To actually extract the textual data, you must call the selector extract() method, as follows:
+```python
+>>> hxs.select('//title/text()').extract()
+[u'Example website']
+```
+Now we’re going to get the base URL and some image links:
+```python
+>>> hxs.select('//base/@href').extract()
+[u'http://example.com/']
+>>>
+>>> hxs.select('//a[contains(@href, "image")]/@href').extract()
+[u'image1.html', u'image2.html', u'image3.html', u'image4.html', u'image5.html']
+>>> hxs.select('//a[contains(@href, "image")]/img/@src').extract()
+[u'image1_thumb.jpg', u'image2_thumb.jpg', u'image3_thumb.jpg', u'image4_thumb.jpg', u'image5_thumb.jpg']
+>>>
 ```
 
