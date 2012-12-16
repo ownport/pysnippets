@@ -45,13 +45,13 @@ class XPathSelectorList(list):
     def extract_unquoted(self):
         return [x.extract_unquoted() for x in self]
 
-class HtmlXPathSelector(object):
+class XPathSelector(object):
     
     def __init__(self, html_content=None, base_url='', _root=None, _expr=None, namespaces=None):
         ''' init
         '''
         self.namespaces = namespaces
-        parser = etree.HTMLParser(recover=True, encoding='utf-8')
+        parser = self._parser(recover=True, encoding='utf-8')
         if html_content is not None:
             _root = etree.fromstring(html_content, parser=parser, base_url=base_url)
         self._root = _root
@@ -79,7 +79,7 @@ class HtmlXPathSelector(object):
 
     def extract(self):
         try:
-            return etree.tostring(self._root, method='html', encoding=unicode, with_tail=False)
+            return etree.tostring(self._root, method=self._tostring_method, encoding=unicode, with_tail=False)
         except (AttributeError, TypeError):
             if self._root is True:
                 return u'1'
@@ -98,6 +98,16 @@ class HtmlXPathSelector(object):
         return "<%s xpath=%r data=%s>" % (type(self).__name__, self._expr, data)
 
     __repr__ = __str__
+
+class XmlXPathSelector(XPathSelector):
+    __slots__ = ()
+    _parser = etree.XMLParser
+    _tostring_method = 'xml'
+
+class HtmlXPathSelector(XPathSelector):
+    __slots__ = ()
+    _parser = etree.HTMLParser
+    _tostring_method = 'html'
 
 
 if __name__ == '__main__':
