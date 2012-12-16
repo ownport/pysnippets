@@ -46,11 +46,7 @@ def extract_regex(regex, text, encoding='utf-8'):
     except:
         strings = regex.findall(text)    # full regex or numbered groups
     strings = flatten(strings)
-
-    if isinstance(text, unicode):
-        return [remove_entities(s, keep=['lt', 'amp']) for s in strings]
-    else:
-        return [remove_entities(unicode(s, encoding), keep=['lt', 'amp']) for s in strings]
+    return strings
 
 class XPathSelectorList(list):
 

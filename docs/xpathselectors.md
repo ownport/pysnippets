@@ -67,4 +67,13 @@ Now we’re going to get the base URL and some image links:
 [u'image1_thumb.jpg', u'image2_thumb.jpg', u'image3_thumb.jpg', u'image4_thumb.jpg', u'image5_thumb.jpg']
 >>>
 ```
+### Using selectors with regular expressions
+
+Selectors also have a re() method for extracting data using regular expressions. However, unlike using the select() method, the re() method does not return a list of XPathSelector objects, so you can’t construct nested .re() calls.
+
+Here’s an example used to extract images names from the HTML code above:
+```python
+>>> hxs.select('//a[contains(@href, "image")]/text()').re(r'Name:\s*(.*)')
+[u'My image 1 ', u'My image 2 ', u'My image 3 ', u'My image 4 ', u'My image 5 ']
+```
 
