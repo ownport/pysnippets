@@ -5,6 +5,8 @@
 #
 #   based on Scrapy selectors https://github.com/scrapy/scrapy/tree/master/scrapy/selector
 #
+
+import re
 from lxml import etree
 
 def flatten(x):
@@ -27,6 +29,28 @@ def flatten(x):
         else:
             result.append(el)
     return result
+
+def extract_regex(regex, text, encoding='utf-8'):
+    """Extract a list of unicode strings from the given text/encoding using the following policies:
+
+    * if the regex contains a named group called "extract" that will be returned
+    * if the regex contains multiple numbered groups, all those will be returned (flattened)
+    * if the regex doesn't contain any group the entire regex matching is returned
+    """
+
+    if isinstance(regex, basestring):
+        regex = re.compile(regex, re.UNICODE)
+
+    try:
+        strings = [regex.search(text).group('extract')]   # named group
+    except:
+        strings = regex.findall(text)    # full regex or numbered groups
+    strings = flatten(strings)
+
+    if isinstance(text, unicode):
+        return [remove_entities(s, keep=['lt', 'amp']) for s in strings]
+    else:
+        return [remove_entities(unicode(s, encoding), keep=['lt', 'amp']) for s in strings]
 
 class XPathSelectorList(list):
 
@@ -77,6 +101,9 @@ class XPathSelector(object):
                   for x in result]
         return XPathSelectorList(result)
 
+    def re(self, regex):
+        return extract_regex(regex, self.extract())
+        
     def extract(self):
         try:
             return etree.tostring(self._root, method=self._tostring_method, encoding=unicode, with_tail=False)
