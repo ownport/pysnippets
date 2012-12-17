@@ -134,29 +134,58 @@ class HtmlXPathSelector(XPathSelector):
 
 
 if __name__ == '__main__':
-    html_content = '''
-    <html>
-     <head>
-      <base href='http://example.com/' />
-      <title>Example website</title>
-     </head>
-     <body>
-      <div id='images'>
-       <a href='image1.html'>Name: My image 1 <br /><img src='image1_thumb.jpg' /></a>
-       <a href='image2.html'>Name: My image 2 <br /><img src='image2_thumb.jpg' /></a>
-       <a href='image3.html'>Name: My image 3 <br /><img src='image3_thumb.jpg' /></a>
-       <a href='image4.html'>Name: My image 4 <br /><img src='image4_thumb.jpg' /></a>
-       <a href='image5.html'>Name: My image 5 <br /><img src='image5_thumb.jpg' /></a>
-      </div>
-     </body>
-    </html>
-    '''
-    hxs = HtmlXPathSelector(html_content) 
-    assert hxs.select('//title/text()').extract() == [u'Example website']
-    assert hxs.select('//base/@href').extract() == [u'http://example.com/']
-    assert hxs.select('//div/@id').extract() == [u'images']
-    assert hxs.select('//a[@href="image2.html"]/img/@src').extract() == [u'image2_thumb.jpg']
-    result = [u'image1_thumb.jpg', u'image2_thumb.jpg', u'image3_thumb.jpg', u'image4_thumb.jpg', u'image5_thumb.jpg']
-    assert hxs.select('//a').select('img/@src').extract() == result
+    def tests_html():
+        ''' HTML tests '''
+        
+        html_content = '''
+        <html>
+         <head>
+          <base href='http://example.com/' />
+          <title>Example website</title>
+         </head>
+         <body>
+          <div id='images'>
+           <a href='image1.html'>Name: My image 1 <br /><img src='image1_thumb.jpg' /></a>
+           <a href='image2.html'>Name: My image 2 <br /><img src='image2_thumb.jpg' /></a>
+           <a href='image3.html'>Name: My image 3 <br /><img src='image3_thumb.jpg' /></a>
+           <a href='image4.html'>Name: My image 4 <br /><img src='image4_thumb.jpg' /></a>
+           <a href='image5.html'>Name: My image 5 <br /><img src='image5_thumb.jpg' /></a>
+          </div>
+         </body>
+        </html>
+        '''
+        hxs = HtmlXPathSelector(html_content) 
+        assert hxs.select('//title/text()').extract() == [u'Example website']
+        assert hxs.select('//base/@href').extract() == [u'http://example.com/']
+        assert hxs.select('//div/@id').extract() == [u'images']
+        assert hxs.select('//a[@href="image2.html"]/img/@src').extract() == [u'image2_thumb.jpg']
+        result = [u'image1_thumb.jpg', u'image2_thumb.jpg', u'image3_thumb.jpg', u'image4_thumb.jpg', u'image5_thumb.jpg']
+        assert hxs.select('//a').select('img/@src').extract() == result
 
+    def tests_xml():
+        ''' XML tests '''
+        
+        xml_content = '''
+        <?xml version="1.0"?>
+        <counters>
+            <measurement start_time="2012-12-12T00:00:00" interval="60">
+                <object name="object_1">
+                    <counter1>10</counter1>
+                    <counter2>20</counter2>
+                    <counter3>30</counter3>
+                    <counter4>40</counter4>
+                    <counter5>50</counter5>
+                </object>
+            </measurement>
+        </counters>
+        '''
+        xxs = XmlXPathSelector(xml_content)
+        assert xxs.select('//counter1/text()').extract() == [u'10']
+        assert xxs.select('//object/@name').extract() == [u'object_1']
 
+    def tests():
+        tests_html()
+        tests_xml()
+
+    tests()
+    
