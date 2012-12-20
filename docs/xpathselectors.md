@@ -77,3 +77,27 @@ Here’s an example used to extract images names from the HTML code above:
 [u'My image 1 ', u'My image 2 ', u'My image 3 ', u'My image 4 ', u'My image 5 ']
 ```
 
+### Nesting selectors
+
+The select() selector method returns a list of selectors, so you can call the select() for those selectors too. Here’s an example:
+```python
+>>> links = hxs.select('//a[contains(@href, "image")]')
+>>> links.extract()
+[u'<a href="image1.html">Name: My image 1 <br><img src="image1_thumb.jpg"></a>',
+ u'<a href="image2.html">Name: My image 2 <br><img src="image2_thumb.jpg"></a>',
+ u'<a href="image3.html">Name: My image 3 <br><img src="image3_thumb.jpg"></a>',
+ u'<a href="image4.html">Name: My image 4 <br><img src="image4_thumb.jpg"></a>',
+ u'<a href="image5.html">Name: My image 5 <br><img src="image5_thumb.jpg"></a>']
+
+>>> for index, link in enumerate(links):
+        args = (index, link.select('@href').extract(), link.select('img/@src').extract())
+        print 'Link number %d points to url %s and image %s' % args
+
+Link number 0 points to url [u'image1.html'] and image [u'image1_thumb.jpg']
+Link number 1 points to url [u'image2.html'] and image [u'image2_thumb.jpg']
+Link number 2 points to url [u'image3.html'] and image [u'image3_thumb.jpg']
+Link number 3 points to url [u'image4.html'] and image [u'image4_thumb.jpg']
+Link number 4 points to url [u'image5.html'] and image [u'image5_thumb.jpg']
+```
+
+

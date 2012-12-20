@@ -161,7 +161,28 @@ if __name__ == '__main__':
         assert hxs.select('//a[@href="image2.html"]/img/@src').extract() == [u'image2_thumb.jpg']
         result = [u'image1_thumb.jpg', u'image2_thumb.jpg', u'image3_thumb.jpg', u'image4_thumb.jpg', u'image5_thumb.jpg']
         assert hxs.select('//a').select('img/@src').extract() == result
+        
+        links = hxs.select('//a[contains(@href, "image")]')
+        assert links.extract() == [
+            u'<a href="image1.html">Name: My image 1 <br><img src="image1_thumb.jpg"></a>',
+            u'<a href="image2.html">Name: My image 2 <br><img src="image2_thumb.jpg"></a>',
+            u'<a href="image3.html">Name: My image 3 <br><img src="image3_thumb.jpg"></a>',
+            u'<a href="image4.html">Name: My image 4 <br><img src="image4_thumb.jpg"></a>',
+            u'<a href="image5.html">Name: My image 5 <br><img src="image5_thumb.jpg"></a>',
+        ]
 
+        results = [
+            ([u'image1.html'], [u'image1_thumb.jpg']),
+            ([u'image2.html'], [u'image2_thumb.jpg']),
+            ([u'image3.html'], [u'image3_thumb.jpg']),
+            ([u'image4.html'], [u'image4_thumb.jpg']),
+            ([u'image5.html'], [u'image5_thumb.jpg']),
+        ]
+        for index, link in enumerate(links):
+            args = (link.select('@href').extract(), link.select('img/@src').extract())
+            assert args == results[index]
+        
+        
     def tests_xml():
         ''' XML tests '''
         
